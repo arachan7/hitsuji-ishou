@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --wool: #fdf8f0;
+  --wool-dark: #f5ede0;
+  --pink-sheep: #fce4ec;
+  --pink-sheep-dark: #f8bbd0;
+  --cream: #fffde7;
+  --fluff: #f0e6ff;
+}
+
+@theme inline {
+  --color-wool: var(--wool);
+  --color-wool-dark: var(--wool-dark);
+  --color-pink-sheep: var(--pink-sheep);
+  --color-pink-sheep-dark: var(--pink-sheep-dark);
+  --color-cream: var(--cream);
+  --color-fluff: var(--fluff);
+}
+
+body {
+  background: var(--wool);
+  font-family: 'Hiragino Maru Gothic ProN', 'Hiragino Kaku Gothic ProN', 'BIZ UDPGothic', Arial, sans-serif;
+  color: #4a3728;
+  font-weight: 500;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.float-anim {
+  animation: float 3s ease-in-out infinite;
+}
