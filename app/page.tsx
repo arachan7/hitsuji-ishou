@@ -138,7 +138,32 @@ export default function HitsujiPage() {
           )}
         </section>
 
-        <footer className="mt-16 text-center">
+        {/* 予約ボタン */}
+        <div className="mt-12 flex justify-center">
+          <a
+            href="https://studio-app-two.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-8 py-4 rounded-full font-black text-base shadow-lg transition-all active:scale-95"
+            style={{
+              background: 'linear-gradient(135deg, #f48fb1, #ce93d8)',
+              color: '#fff',
+              boxShadow: '0 6px 20px rgba(206,147,216,0.5)',
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = 'scale(1.04)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = ''; }}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            撮影の予約・料金はこちら
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+
+        <footer className="mt-10 text-center">
           <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full" style={{ background: '#fce4ec' }}>
             <Image src="/hitsuji.png" alt="ひつじ" width={22} height={22} />
             <span className="text-xs font-semibold" style={{ color: '#9e6080' }}>Jungle Studio</span>
