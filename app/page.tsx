@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { COSTUME_DATA, COSTUME_SIZES, type CostumeSize } from '@/data/costumes';
+import { COSTUME_SIZES, type CostumeSize } from '@/data/costumes';
+
+type Photo = { id: number; sizeRange: string; imageData: string; caption: string | null };
 
 const SIZE_LABELS: Record<CostumeSize, string> = {
   '50-60':   '50〜60cm',
@@ -16,9 +18,19 @@ const SIZE_LABELS: Record<CostumeSize, string> = {
 
 export default function HitsujiPage() {
   const [selectedSize, setSelectedSize] = useState<CostumeSize>('90-100');
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<{ src: string; caption?: string } | null>(null);
 
-  const photos = COSTUME_DATA[selectedSize];
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetch(`/api/photos?size=${selectedSize}`)
+      .then((r) => r.json())
+      .then((data: Photo[]) => { if (!cancelled) { setPhotos(data); setLoading(false); } })
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [selectedSize]);
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #fdf8f0 0%, #fce4ec22 100%)' }}>
@@ -82,7 +94,12 @@ export default function HitsujiPage() {
             </span>
           </div>
 
-          {photos.length === 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center py-16 gap-4">
+              <div style={{ animation: 'float 3s ease-in-out infinite' }}><Image src="/hitsuji.png" alt="ひつじ" width={60} height={60} /></div>
+              <p className="text-sm" style={{ color: '#c09090' }}>読み込み中...</p>
+            </div>
+          ) : photos.length === 0 ? (
             <div className="flex flex-col items-center py-16 gap-3">
               <Image src="/hitsuji.png" alt="ひつじ" width={60} height={60} className="opacity-40" />
               <p className="text-sm font-semibold" style={{ color: '#c0a0a0' }}>
@@ -91,17 +108,17 @@ export default function HitsujiPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {photos.map((photo, i) => (
+              {photos.map((photo) => (
                 <button
-                  key={i}
-                  onClick={() => setLightbox(photo)}
+                  key={photo.id}
+                  onClick={() => setLightbox({ src: photo.imageData, caption: photo.caption ?? undefined })}
                   className="group relative bg-white rounded-3xl overflow-hidden shadow-sm border-2 text-left transition-all duration-200"
                   style={{ borderColor: '#fce4ec' }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.03)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 20px rgba(206,147,216,0.3)'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = ''; }}
                 >
                   <div className="relative aspect-square">
-                    <Image src={photo.src} alt={photo.caption ?? `衣装 ${selectedSize}`} fill className="object-cover" />
+                    <Image src={photo.imageData} alt={photo.caption ?? `衣装 ${selectedSize}`} fill className="object-cover" unoptimized />
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center" style={{ background: 'rgba(248,187,208,0.3)' }}>
                       <span className="text-2xl">🔍</span>
                     </div>
@@ -109,6 +126,7 @@ export default function HitsujiPage() {
                   {photo.caption && (
                     <p className="text-xs px-2 py-1.5 truncate font-semibold" style={{ color: '#9e6080', background: '#fdf8f0' }}>{photo.caption}</p>
                   )}
+
                 </button>
               ))}
             </div>
