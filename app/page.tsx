@@ -2,12 +2,9 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { COSTUME_DATA } from '@/data/costumes';
+import { COSTUME_DATA, COSTUME_SIZES, type CostumeSize } from '@/data/costumes';
 
-const SIZE_RANGES = ['50-60', '70-80', '80-90', '90-100', '100-110', '110-120', '120-130'] as const;
-type SizeRange = typeof SIZE_RANGES[number];
-
-const SIZE_LABELS: Record<SizeRange, string> = {
+const SIZE_LABELS: Record<CostumeSize, string> = {
   '50-60':   '50〜60cm',
   '70-80':   '70〜80cm',
   '80-90':   '80〜90cm',
@@ -18,10 +15,10 @@ const SIZE_LABELS: Record<SizeRange, string> = {
 };
 
 export default function HitsujiPage() {
-  const [selectedSize, setSelectedSize] = useState<SizeRange>('90-100');
+  const [selectedSize, setSelectedSize] = useState<CostumeSize>('90-100');
   const [lightbox, setLightbox] = useState<{ src: string; caption?: string } | null>(null);
 
-  const photos = COSTUME_DATA[selectedSize] ?? [];
+  const photos = COSTUME_DATA[selectedSize];
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #fdf8f0 0%, #fce4ec22 100%)' }}>
@@ -58,7 +55,7 @@ export default function HitsujiPage() {
             🐑 サイズを選んでね 🐑
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            {SIZE_RANGES.map((size) => (
+            {COSTUME_SIZES.map((size) => (
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
