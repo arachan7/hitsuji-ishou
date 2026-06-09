@@ -26,9 +26,14 @@ export default function HitsujiPage() {
     let cancelled = false;
     setLoading(true);
     fetch(`/api/photos?size=${selectedSize}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error('Failed to load photos');
+        }
+        return r.json();
+      })
       .then((data: Photo[]) => { if (!cancelled) { setPhotos(data); setLoading(false); } })
-      .catch(() => { if (!cancelled) setLoading(false); });
+      .catch(() => { if (!cancelled) { setPhotos([]); setLoading(false); } });
     return () => { cancelled = true; };
   }, [selectedSize]);
 
