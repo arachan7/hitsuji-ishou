@@ -18,6 +18,21 @@ const SIZE_LABELS: Record<CostumeSize, string> = {
 
 const BOOKING_URL = 'https://studio-app-two.vercel.app/';
 
+function isPhotoArray(value: unknown): value is Photo[] {
+  return Array.isArray(value)
+    && value.every((item) => {
+      if (!item || typeof item !== 'object') {
+        return false;
+      }
+
+      const photo = item as Partial<Photo>;
+      return typeof photo.id === 'number'
+        && typeof photo.sizeRange === 'string'
+        && typeof photo.imageData === 'string'
+        && (photo.caption === null || typeof photo.caption === 'string');
+    });
+}
+
 function BookingButton({ size = 'md' }: { size?: 'sm' | 'md' }) {
   const sm = size === 'sm';
   return (
@@ -55,7 +70,16 @@ export default function HitsujiPage() {
     setLoading(true);
     fetch(`/api/photos?size=${selectedSize}`)
       .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
-      .then((data: Photo[]) => { if (!cancelled) { setPhotos(data); setLoading(false); } })
+      .then((data: unknown) => {
+        if (!isPhotoArray(data)) {
+          throw new Error('Invalid photos response');
+        }
+
+        if (!cancelled) {
+          setPhotos(data);
+          setLoading(false);
+        }
+      })
       .catch(() => { if (!cancelled) { setPhotos([]); setLoading(false); } });
     return () => { cancelled = true; };
   }, [selectedSize]);

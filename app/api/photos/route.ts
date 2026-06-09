@@ -5,11 +5,20 @@ import { eq, asc } from 'drizzle-orm';
 import { isCostumeSize } from '@/data/costumes';
 
 const MAX_PHOTOS = 100;
+const MAX_CAPTION_LENGTH = 120;
 const MAX_IMAGE_DATA_LENGTH = 8 * 1024 * 1024;
 const SAFE_IMAGE_DATA_PATTERN = /^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/;
 
 function isSafeImageData(value: string) {
   return value.length <= MAX_IMAGE_DATA_LENGTH && SAFE_IMAGE_DATA_PATTERN.test(value);
+}
+
+function normalizeCaption(caption: string | null) {
+  if (!caption) {
+    return null;
+  }
+
+  return caption.slice(0, MAX_CAPTION_LENGTH);
 }
 
 export async function GET(request: NextRequest) {
@@ -45,7 +54,14 @@ export async function GET(request: NextRequest) {
           .orderBy(asc(costumePhotos.sizeRange), asc(costumePhotos.displayOrder), asc(costumePhotos.createdAt))
           .limit(MAX_PHOTOS);
 
-    return NextResponse.json(rows.filter((row) => isSafeImageData(row.imageData)));
+    return NextResponse.json(
+      rows
+        .filter((row) => isSafeImageData(row.imageData) && isCostumeSize(row.sizeRange))
+        .map((row) => ({
+          ...row,
+          caption: normalizeCaption(row.caption),
+        })),
+    );
   } catch {
     return NextResponse.json({ error: 'Failed to load photos' }, { status: 500 });
   }
