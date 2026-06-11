@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'ひつじの衣装 | Jungle Studio',
-  description: 'ジャングルスタジオのお子様衣装をサイズ別にご覧いただけます',
+  description: 'ジャングルスタジオのお子さま衣装をサイズ別にご覧いただけます。',
   icons: { icon: '/hitsuji.png' },
 };
 

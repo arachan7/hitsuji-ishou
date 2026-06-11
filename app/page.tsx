@@ -7,13 +7,13 @@ import { COSTUME_SIZES, type CostumeSize } from '@/data/costumes';
 type Photo = { id: number; sizeRange: string; imageData: string; caption: string | null };
 
 const SIZE_LABELS: Record<CostumeSize, string> = {
-  '50-60':   '50〜60cm',
-  '70-80':   '70〜80cm',
-  '80-90':   '80〜90cm',
-  '90-100':  '90〜100cm',
-  '100-110': '100〜110cm',
-  '110-120': '110〜120cm',
-  '120-130': '120〜130cm',
+  '50-60': '50-60cm',
+  '70-80': '70-80cm',
+  '80-90': '80-90cm',
+  '90-100': '90-100cm',
+  '100-110': '100-110cm',
+  '110-120': '110-120cm',
+  '120-130': '120-130cm',
 };
 
 const BOOKING_URL = 'https://studio-app-two.vercel.app/';
@@ -69,7 +69,13 @@ export default function HitsujiPage() {
     let cancelled = false;
     setLoading(true);
     fetch(`/api/photos?size=${selectedSize}`)
-      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error('Failed to load photos');
+        }
+
+        return r.json();
+      })
       .then((data: unknown) => {
         if (!isPhotoArray(data)) {
           throw new Error('Invalid photos response');
@@ -80,22 +86,25 @@ export default function HitsujiPage() {
           setLoading(false);
         }
       })
-      .catch(() => { if (!cancelled) { setPhotos([]); setLoading(false); } });
+      .catch(() => {
+        if (!cancelled) {
+          setPhotos([]);
+          setLoading(false);
+        }
+      });
     return () => { cancelled = true; };
   }, [selectedSize]);
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #fdf8f0 0%, #fce4ec22 100%)' }}>
-      {/* ヘッダー */}
       <header
         className="relative overflow-hidden py-8 px-4 text-center"
         style={{ background: 'linear-gradient(135deg, #fce4ec 0%, #f8bbd0 50%, #e1bee7 100%)' }}
       >
-        <div className="absolute top-2 left-4 opacity-30 text-5xl select-none pointer-events-none">☁️</div>
-        <div className="absolute top-4 right-8 opacity-20 text-4xl select-none pointer-events-none">☁️</div>
-        <div className="absolute bottom-4 left-16 opacity-15 text-3xl select-none pointer-events-none">☁️</div>
+        <div className="absolute top-2 left-4 opacity-30 text-5xl select-none pointer-events-none">＊</div>
+        <div className="absolute top-4 right-8 opacity-20 text-4xl select-none pointer-events-none">＊</div>
+        <div className="absolute bottom-4 left-16 opacity-15 text-3xl select-none pointer-events-none">＊</div>
 
-        {/* 右上予約ボタン */}
         <div className="absolute top-4 right-4 z-20">
           <BookingButton size="sm" />
         </div>
@@ -107,7 +116,7 @@ export default function HitsujiPage() {
           <h1 className="text-3xl font-black tracking-wide" style={{ color: '#7b3f6e', textShadow: '0 2px 8px rgba(255,255,255,0.8)' }}>
             ひつじの衣装
           </h1>
-          <p className="text-sm" style={{ color: '#a0607a' }}>Jungle Studio ✦ お子様衣装コレクション</p>
+          <p className="text-sm" style={{ color: '#a0607a' }}>Jungle Studio お子さま衣装コレクション</p>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 overflow-hidden h-5">
@@ -118,10 +127,9 @@ export default function HitsujiPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-16">
-        {/* サイズ選択 */}
         <section className="mb-8">
           <p className="text-center text-xs font-semibold mb-4" style={{ color: '#b07070' }}>
-            🐑 サイズを選んでね 🐑
+            サイズを選んでください
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {COSTUME_SIZES.map((size) => (
@@ -141,10 +149,9 @@ export default function HitsujiPage() {
           </div>
         </section>
 
-        {/* 写真グリッド */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-lg">🐑</span>
+            <span className="text-lg">◇</span>
             <h2 className="font-black text-lg" style={{ color: '#7b3f6e' }}>{SIZE_LABELS[selectedSize]} の衣装</h2>
             <span className="text-xs px-2 py-0.5 rounded-full font-semibold ml-auto" style={{ background: '#fce4ec', color: '#b07070' }}>
               {photos.length}着
@@ -173,7 +180,6 @@ export default function HitsujiPage() {
                   className="bg-white rounded-3xl overflow-hidden shadow-sm border-2 flex flex-col"
                   style={{ borderColor: '#fce4ec' }}
                 >
-                  {/* 写真（タップで拡大） */}
                   <button
                     onClick={() => setLightbox({ src: photo.imageData, caption: photo.caption ?? undefined })}
                     className="group relative block w-full"
@@ -188,7 +194,6 @@ export default function HitsujiPage() {
                       <p className="text-xs px-2 py-1.5 truncate font-semibold text-left" style={{ color: '#9e6080' }}>{photo.caption}</p>
                     )}
                   </button>
-
                 </div>
               ))}
             </div>
@@ -206,7 +211,6 @@ export default function HitsujiPage() {
         </footer>
       </main>
 
-      {/* ライトボックス */}
       {lightbox && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.75)' }} onClick={() => setLightbox(null)}>
           <div className="relative max-w-lg w-full rounded-3xl overflow-hidden shadow-2xl" style={{ background: '#fdf8f0' }} onClick={(e) => e.stopPropagation()}>
@@ -216,7 +220,7 @@ export default function HitsujiPage() {
             {lightbox.caption && (
               <p className="text-center font-semibold pt-3 px-4" style={{ color: '#7b3f6e' }}>{lightbox.caption}</p>
             )}
-            <button onClick={() => setLightbox(null)} className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-lg shadow" style={{ background: '#fce4ec', color: '#9e6080' }}>✕</button>
+            <button onClick={() => setLightbox(null)} className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-lg shadow" style={{ background: '#fce4ec', color: '#9e6080' }}>×</button>
           </div>
         </div>
       )}
