@@ -189,10 +189,6 @@ export default function HitsujiPage() {
                     )}
                   </button>
 
-                  {/* 予約ボタン */}
-                  <div className="px-2 pb-2.5 pt-1 mt-auto">
-                    <BookingButton size="sm" />
-                  </div>
                 </div>
               ))}
             </div>
@@ -200,6 +196,9 @@ export default function HitsujiPage() {
         </section>
 
         <footer className="mt-16 text-center">
+          <div className="mb-4 flex justify-center">
+            <BookingButton size="md" />
+          </div>
           <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full" style={{ background: '#fce4ec' }}>
             <Image src="/hitsuji.png" alt="ひつじ" width={22} height={22} />
             <span className="text-xs font-semibold" style={{ color: '#9e6080' }}>Jungle Studio</span>
@@ -217,9 +216,6 @@ export default function HitsujiPage() {
             {lightbox.caption && (
               <p className="text-center font-semibold pt-3 px-4" style={{ color: '#7b3f6e' }}>{lightbox.caption}</p>
             )}
-            <div className="flex justify-center px-4 py-3">
-              <BookingButton size="md" />
-            </div>
             <button onClick={() => setLightbox(null)} className="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center font-black text-lg shadow" style={{ background: '#fce4ec', color: '#9e6080' }}>✕</button>
           </div>
         </div>
