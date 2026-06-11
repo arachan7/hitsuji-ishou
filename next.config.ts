@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               "img-src 'self' data:",
-              "script-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'",
               "connect-src 'self'",
               "frame-ancestors 'self' https://studio-app-two.vercel.app",
